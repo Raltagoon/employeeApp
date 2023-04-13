@@ -5,7 +5,8 @@
         public int Id { get; set; }
         public string Title { get; set; }
 
-        public ICollection<EmployeePositionLink> Employees { get; set; }
+        public ICollection<EmployeePositionLink>? Employees { get; set; }
+        public ICollection<PositionHistory>? Histories { get; set; }
 
 
         public Position(string title)

@@ -28,22 +28,32 @@ namespace FlyingCars.EmployeeExample
         public async Task AddEmployeeAsync(Employee employee)
         {
             await _context.Employees.AddAsync(employee);
+            await SaveAsync();
 
-            var histories = new List<History>();
+            var departmentHistories = new List<DepartmentHistory>();
+            foreach (var department in employee.Departments)
+            {
+                departmentHistories.Add(new DepartmentHistory
+                {
+                    EmployeeId = employee.Id,
+                    DepartmentId = department.DepartmentId,
+                    CreatedOn = DateTime.Now
+                });
+            }
+            await _context.DepartmentHistories.AddRangeAsync(departmentHistories);
+
+            var positionHistories = new List<PositionHistory>();
             foreach (var position in employee.Positions)
             {
-                foreach (var department in employee.Departments)
+                positionHistories.Add(new PositionHistory
                 {
-                    histories.Add(new History
-                    {
-                        EmployeeId = employee.Id,
-                        CreatedOn = DateTime.Now,
-                        PositionId = position.PositionId,
-                        DepartmentId = department.DepartmentId
-                    });
-                }
+                    EmployeeId = employee.Id,
+                    PositionId = position.PositionId,
+                    CreatedOn = DateTime.Now
+                });
             }
-            await _context.Histories.AddRangeAsync(histories);
+            await _context.PositionHistories.AddRangeAsync(positionHistories);
+
             await SaveAsync();
         }
 
@@ -171,29 +181,21 @@ namespace FlyingCars.EmployeeExample
             {
                 var itemToRemove = employee.Positions.Single(p => p.EmployeeId == employeeId && p.PositionId == oldPositionId);
                 employee.Positions.Remove(itemToRemove);
-                var oldHistories = await _context.Histories.Where(h => h.EmployeeId == employeeId && h.DeletedOn == null && h.PositionId == oldPositionId).ToListAsync();
-                foreach (var history in oldHistories)
-                {
-                    history.DeletedOn = DateTime.Now;
-                }
+                var oldHistory = await _context.PositionHistories.Where(h => h.EmployeeId == employeeId && h.DeletedOn == null && h.PositionId == oldPositionId).FirstAsync();
+                oldHistory.DeletedOn = DateTime.Now;
             }
 
             if (newPositionId.HasValue)
             {
                 employee.Positions.Add(new EmployeePositionLink { EmployeeId = employeeId, PositionId = newPositionId.Value });
 
-                var histories = new List<History>();
-                foreach (var department in employee.Departments)
-                {
-                    histories.Add(new History
+                var history = new PositionHistory
                     {
                         EmployeeId = employeeId,
                         CreatedOn = DateTime.Now,
-                        PositionId = newPositionId.Value,
-                        DepartmentId = department.DepartmentId
-                    });
-                }
-                await _context.Histories.AddRangeAsync(histories);
+                        PositionId = newPositionId.Value
+                    };
+                await _context.PositionHistories.AddAsync(history);
             }
 
             await SaveAsync();
@@ -232,29 +234,21 @@ namespace FlyingCars.EmployeeExample
             {
                 var itemToRemove = employee.Departments.Single(p => p.EmployeeId == employeeId && p.DepartmentId == oldDepartmentId);
                 employee.Departments.Remove(itemToRemove);
-                var oldHistories = await _context.Histories.Where(h => h.EmployeeId == employeeId && h.DeletedOn == null && h.DepartmentId == oldDepartmentId).ToListAsync();
-                foreach (var history in oldHistories)
-                {
-                    history.DeletedOn = DateTime.Now;
-                }
+                var oldHistory = await _context.DepartmentHistories.Where(h => h.EmployeeId == employeeId && h.DeletedOn == null && h.DepartmentId == oldDepartmentId).FirstAsync();
+                oldHistory.DeletedOn = DateTime.Now;
             }
 
             if (newDepartmentId.HasValue)
             {
                 employee.Departments.Add(new EmployeeDepartmentLink { EmployeeId = employeeId, DepartmentId = newDepartmentId.Value });
 
-                var histories = new List<History>();
-                foreach (var position in employee.Positions)
-                {
-                    histories.Add(new History
+                var history = new DepartmentHistory
                     {
                         EmployeeId = employeeId,
                         CreatedOn = DateTime.Now,
-                        PositionId = position.PositionId,
                         DepartmentId = newDepartmentId.Value
-                    });
-                }
-                await _context.Histories.AddRangeAsync(histories);
+                    };
+                await _context.DepartmentHistories.AddAsync(history);
             }
             await SaveAsync();
         }
@@ -290,8 +284,13 @@ namespace FlyingCars.EmployeeExample
                 throw new ArgumentException($"There is no employee with ID {id}");
             }
 
-            var histories = await _context.Histories.Where(h => h.EmployeeId == id && h.DeletedOn == null).ToListAsync();
-            foreach (var history in histories)
+            var positionHistories = await _context.PositionHistories.Where(h => h.EmployeeId == id && h.DeletedOn == null).ToListAsync();
+            foreach (var history in positionHistories)
+            {
+                history.DeletedOn = DateTime.Now;
+            }
+            var departmentHistories = await _context.DepartmentHistories.Where(h => h.EmployeeId == id && h.DeletedOn == null).ToListAsync();
+            foreach (var history in departmentHistories)
             {
                 history.DeletedOn = DateTime.Now;
             }

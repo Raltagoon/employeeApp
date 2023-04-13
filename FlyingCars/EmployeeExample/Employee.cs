@@ -25,7 +25,7 @@ namespace FlyingCars.EmployeeExample
         {
             if (Documents == null || Documents.Count != 2)
             {
-                throw new ArgumentException("At least Inn and Snils must be provided.");
+                throw new ArgumentException("Inn and Snils must be provided.");
             }
         }
     }

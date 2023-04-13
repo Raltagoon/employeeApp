@@ -11,8 +11,8 @@ public class CarContext : DbContext
     public DbSet<Document> Documents => Set<Document>();
     public DbSet<Department> Departments => Set<Department>();
     public DbSet<Position> Positions => Set<Position>();
-    public DbSet<History> Histories => Set<History>();
-
+    public DbSet<DepartmentHistory> DepartmentHistories => Set<DepartmentHistory>();
+    public DbSet<PositionHistory> PositionHistories => Set<PositionHistory>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -82,6 +82,30 @@ public class CarContext : DbContext
             .HasMany(p => p.Employees)
             .WithOne()
             .HasForeignKey(ep => ep.DepartmentId)
+            .IsRequired();
+
+        // Department - DepartmentHistory
+        modelBuilder.Entity<Department>()
+            .HasMany(d => d.Histories)
+            .WithOne()
+            .HasForeignKey(dh => dh.DepartmentId)
+            .IsRequired(false);
+        modelBuilder.Entity<DepartmentHistory>()
+            .HasOne<Department>()
+            .WithMany(d => d.Histories)
+            .HasForeignKey(dh => dh.DepartmentId)
+            .IsRequired();
+
+        // Position - PositionHistory
+        modelBuilder.Entity<Position>()
+            .HasMany(p => p.Histories)
+            .WithOne()
+            .HasForeignKey(ph => ph.PositionId)
+            .IsRequired(false);
+        modelBuilder.Entity<PositionHistory>()
+            .HasOne<Position>()
+            .WithMany(p => p.Histories)
+            .HasForeignKey(ph => ph.PositionId)
             .IsRequired();
 
         modelBuilder.Entity<Document>()
