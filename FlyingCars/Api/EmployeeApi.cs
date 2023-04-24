@@ -1,4 +1,7 @@
-﻿using ValidationsCollection;
+﻿using FlyingCars.Models.Department;
+using FlyingCars.Models.Employee;
+using FlyingCars.Models.Position;
+using ValidationsCollection;
 
 namespace FlyingCars.EmployeeExample
 {
@@ -25,7 +28,7 @@ namespace FlyingCars.EmployeeExample
             app.MapPost("/employee", async (EmployeeRepository repository, Employee employee) =>
             {
                 employee.Validate();
-                await repository.AddEmployeeAsync(employee);
+                //await repository.AddEmployeeAsync(employee);
                 return Results.Ok(employee);
             })
             .WithName("Create employee")
@@ -68,6 +71,50 @@ namespace FlyingCars.EmployeeExample
             .WithName("Get all documents")
             .WithTags("Employee.Read");
 
+            app.MapGet("/departmenthistories", async (EmployeeRepository repository) =>
+            {
+                return Results.Ok(await repository.GetDepartmentHistoriesAsync());
+            });
+
+            app.MapGet("/positionhistories", async (EmployeeRepository repository) =>
+            {
+                return Results.Ok(await repository.GetPositionHistoriesAsync());
+            });
+
+            app.MapGet("/positionhistories/position", async (EmployeeRepository repository, int positionId) =>
+            {
+                //return Results.Ok(await repository.GetPositionHistoryByPositionAsync(positionId));
+            });
+
+            app.MapGet("/departmenthistories/department", async (EmployeeRepository repository, int departmentId) =>
+            {
+                //return Results.Ok(await repository.GetDepartmentHistoryByPositionAsync(departmentId));
+            });
+
+            app.MapGet("/employee/search/position", async (EmployeeRepository repository, string position) =>
+            {
+                if (await repository.GetEmployeesByPositionAsync(position) is ICollection<Employee> employees)
+                {
+                    return Results.Ok(employees);
+                }
+                else
+                {
+                    return Results.NotFound();
+                }
+            });
+
+            app.MapGet("/employee/search/department", async (EmployeeRepository repository, string department) =>
+            {
+                if (await repository.GetEmployeesByDepartmentAsync(department) is ICollection<Employee> employees)
+                {
+                    return Results.Ok(employees);
+                }
+                else
+                {
+                    return Results.NotFound();
+                }
+            });
+
             //update
             app.MapPut("/department", async (EmployeeRepository repository, Department department) =>
             {
@@ -103,13 +150,13 @@ namespace FlyingCars.EmployeeExample
 
             app.MapPut("/employee/changeposition", async (EmployeeRepository repository, int employeeId, int? newPositionId, int? oldPositionId) =>
             {
-                await repository.ChangeEmployeePosition(employeeId, newPositionId, oldPositionId);
+                //await repository.ChangeEmployeePosition(employeeId, newPositionId, oldPositionId);
                 return Results.Ok();
             });
 
             app.MapPut("/employee/transfer", async (EmployeeRepository repository, int employeeId, int? newDepartmentId, int? oldDepartmentId) =>
             {
-                await repository.ChangeEmployeeDepartment(employeeId, newDepartmentId, oldDepartmentId);
+                //await repository.ChangeEmployeeDepartment(employeeId, newDepartmentId, oldDepartmentId);
                 return Results.Ok();
             });
 
@@ -132,7 +179,7 @@ namespace FlyingCars.EmployeeExample
 
             app.MapDelete("/employee/{id}", async (EmployeeRepository repository, int id) =>
             {
-                await repository.DeleteEmployeeByIdAsync(id);
+            //    await repository.DeleteEmployeeByIdAsync(id);
                 return Results.Ok();
             })
             .WithName("Delete employee")

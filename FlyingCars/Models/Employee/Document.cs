@@ -1,8 +1,8 @@
 ﻿using ValidationsCollection;
 
-namespace FlyingCars.EmployeeExample
+namespace FlyingCars.Models.Employee
 {
-    public enum  DocumentType
+    public enum DocumentType
     {
         Inn,
         Snils

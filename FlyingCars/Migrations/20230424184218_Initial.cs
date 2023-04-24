@@ -14,6 +14,25 @@ namespace FlyingCars.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "DepartmentHistories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    CreatedOn = table.Column<DateOnly>(type: "date", nullable: false),
+                    DeletedOn = table.Column<DateOnly>(type: "date", nullable: true),
+                    DepEvent = table.Column<int>(type: "int", nullable: false),
+                    EmployeeId = table.Column<int>(type: "int", nullable: false),
+                    DepartmentName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DepartmentHistories", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Departments",
                 columns: table => new
                 {
@@ -40,11 +59,30 @@ namespace FlyingCars.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     MiddleName = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    DateOfBirth = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    DateOfBirth = table.Column<DateOnly>(type: "date", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Employees", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "PositionHistories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    CreatedOn = table.Column<DateOnly>(type: "date", nullable: false),
+                    DeletedOn = table.Column<DateOnly>(type: "date", nullable: true),
+                    PosEvent = table.Column<int>(type: "int", nullable: false),
+                    EmployeeId = table.Column<int>(type: "int", nullable: false),
+                    PositionName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PositionHistories", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -156,6 +194,9 @@ namespace FlyingCars.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "DepartmentHistories");
+
+            migrationBuilder.DropTable(
                 name: "Documents");
 
             migrationBuilder.DropTable(
@@ -163,6 +204,9 @@ namespace FlyingCars.Migrations
 
             migrationBuilder.DropTable(
                 name: "EmployeePositionLink");
+
+            migrationBuilder.DropTable(
+                name: "PositionHistories");
 
             migrationBuilder.DropTable(
                 name: "Departments");

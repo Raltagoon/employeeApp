@@ -1,4 +1,4 @@
-﻿namespace FlyingCars.EmployeeExample
+﻿namespace FlyingCars.Models.Linkers
 {
     public class EmployeePositionLink
     {

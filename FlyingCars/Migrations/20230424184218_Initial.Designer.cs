@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FlyingCars.Migrations
 {
     [DbContext(typeof(CarContext))]
-    [Migration("20230410095114_AddedHistory")]
-    partial class AddedHistory
+    [Migration("20230424184218_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,7 +20,7 @@ namespace FlyingCars.Migrations
                 .HasAnnotation("ProductVersion", "6.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("FlyingCars.EmployeeExample.Department", b =>
+            modelBuilder.Entity("FlyingCars.Models.Department.Department", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -35,7 +35,7 @@ namespace FlyingCars.Migrations
                     b.ToTable("Departments");
                 });
 
-            modelBuilder.Entity("FlyingCars.EmployeeExample.Document", b =>
+            modelBuilder.Entity("FlyingCars.Models.Employee.Document", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -59,14 +59,14 @@ namespace FlyingCars.Migrations
                     b.ToTable("Documents");
                 });
 
-            modelBuilder.Entity("FlyingCars.EmployeeExample.Employee", b =>
+            modelBuilder.Entity("FlyingCars.Models.Employee.Employee", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("datetime(6)");
+                    b.Property<DateOnly>("DateOfBirth")
+                        .HasColumnType("date");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -84,7 +84,61 @@ namespace FlyingCars.Migrations
                     b.ToTable("Employees");
                 });
 
-            modelBuilder.Entity("FlyingCars.EmployeeExample.EmployeeDepartmentLink", b =>
+            modelBuilder.Entity("FlyingCars.Models.History.DepartmentHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly>("CreatedOn")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("DeletedOn")
+                        .HasColumnType("date");
+
+                    b.Property<int>("DepEvent")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DepartmentName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DepartmentHistories");
+                });
+
+            modelBuilder.Entity("FlyingCars.Models.History.PositionHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly>("CreatedOn")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("DeletedOn")
+                        .HasColumnType("date");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PosEvent")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PositionName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PositionHistories");
+                });
+
+            modelBuilder.Entity("FlyingCars.Models.Linkers.EmployeeDepartmentLink", b =>
                 {
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
@@ -99,7 +153,7 @@ namespace FlyingCars.Migrations
                     b.ToTable("EmployeeDepartmentLink");
                 });
 
-            modelBuilder.Entity("FlyingCars.EmployeeExample.EmployeePositionLink", b =>
+            modelBuilder.Entity("FlyingCars.Models.Linkers.EmployeePositionLink", b =>
                 {
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
@@ -114,33 +168,7 @@ namespace FlyingCars.Migrations
                     b.ToTable("EmployeePositionLink");
                 });
 
-            modelBuilder.Entity("FlyingCars.EmployeeExample.History", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime?>("DeletedOn")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("DepartmentId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PositionId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Histories");
-                });
-
-            modelBuilder.Entity("FlyingCars.EmployeeExample.Position", b =>
+            modelBuilder.Entity("FlyingCars.Models.Position.Position", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -155,51 +183,51 @@ namespace FlyingCars.Migrations
                     b.ToTable("Positions");
                 });
 
-            modelBuilder.Entity("FlyingCars.EmployeeExample.Document", b =>
+            modelBuilder.Entity("FlyingCars.Models.Employee.Document", b =>
                 {
-                    b.HasOne("FlyingCars.EmployeeExample.Employee", null)
+                    b.HasOne("FlyingCars.Models.Employee.Employee", null)
                         .WithMany("Documents")
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("FlyingCars.EmployeeExample.EmployeeDepartmentLink", b =>
+            modelBuilder.Entity("FlyingCars.Models.Linkers.EmployeeDepartmentLink", b =>
                 {
-                    b.HasOne("FlyingCars.EmployeeExample.Department", null)
+                    b.HasOne("FlyingCars.Models.Department.Department", null)
                         .WithMany("Employees")
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("FlyingCars.EmployeeExample.Employee", null)
+                    b.HasOne("FlyingCars.Models.Employee.Employee", null)
                         .WithMany("Departments")
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("FlyingCars.EmployeeExample.EmployeePositionLink", b =>
+            modelBuilder.Entity("FlyingCars.Models.Linkers.EmployeePositionLink", b =>
                 {
-                    b.HasOne("FlyingCars.EmployeeExample.Employee", null)
+                    b.HasOne("FlyingCars.Models.Employee.Employee", null)
                         .WithMany("Positions")
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FlyingCars.EmployeeExample.Position", null)
+                    b.HasOne("FlyingCars.Models.Position.Position", null)
                         .WithMany("Employees")
                         .HasForeignKey("PositionId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("FlyingCars.EmployeeExample.Department", b =>
+            modelBuilder.Entity("FlyingCars.Models.Department.Department", b =>
                 {
                     b.Navigation("Employees");
                 });
 
-            modelBuilder.Entity("FlyingCars.EmployeeExample.Employee", b =>
+            modelBuilder.Entity("FlyingCars.Models.Employee.Employee", b =>
                 {
                     b.Navigation("Departments");
 
@@ -208,7 +236,7 @@ namespace FlyingCars.Migrations
                     b.Navigation("Positions");
                 });
 
-            modelBuilder.Entity("FlyingCars.EmployeeExample.Position", b =>
+            modelBuilder.Entity("FlyingCars.Models.Position.Position", b =>
                 {
                     b.Navigation("Employees");
                 });

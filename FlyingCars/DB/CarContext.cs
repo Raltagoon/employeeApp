@@ -1,4 +1,8 @@
-﻿using FlyingCars.EmployeeExample;
+﻿using FlyingCars.Models.Department;
+using FlyingCars.Models.Employee;
+using FlyingCars.Models.History;
+using FlyingCars.Models.Linkers;
+using FlyingCars.Models.Position;
 using Microsoft.EntityFrameworkCore;
 
 public class CarContext : DbContext
@@ -23,11 +27,6 @@ public class CarContext : DbContext
             .HasForeignKey(d => d.EmployeeId)
             .IsRequired();
 
-        modelBuilder.Entity<Document>()
-            .HasOne<Employee>()
-            .WithMany(e => e.Documents)
-            .IsRequired();
-
         // Employee - EmployeePositionLink - Position
         modelBuilder.Entity<EmployeePositionLink>()
             .HasKey(ep => new {ep.EmployeeId, ep.PositionId });
@@ -38,23 +37,13 @@ public class CarContext : DbContext
             .HasForeignKey(ep => ep.EmployeeId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<Employee>()
-            .HasMany(e => e.Positions)
-            .WithOne()
-            .HasForeignKey(ep => ep.EmployeeId)
-            .IsRequired();
 
         modelBuilder.Entity<EmployeePositionLink>()
             .HasOne<Position>()
             .WithMany(p => p.Employees)
             .HasForeignKey(ep => ep.PositionId)
-            .IsRequired(false)
+            .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
-        modelBuilder.Entity<Position>()
-            .HasMany(p => p.Employees)
-            .WithOne()
-            .HasForeignKey(ep => ep.PositionId)
-            .IsRequired();
         
         // Employee - EmployeeDepartmentLink - Department
         modelBuilder.Entity<EmployeeDepartmentLink>()
@@ -66,50 +55,27 @@ public class CarContext : DbContext
             .HasForeignKey(ep => ep.EmployeeId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<Employee>()
-            .HasMany(e => e.Departments)
-            .WithOne()
-            .HasForeignKey(ep => ep.EmployeeId)
-            .IsRequired();
 
         modelBuilder.Entity<EmployeeDepartmentLink>()
             .HasOne<Department>()
             .WithMany(p => p.Employees)
             .HasForeignKey(ep => ep.DepartmentId)
-            .IsRequired(false)
+            .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
-        modelBuilder.Entity<Department>()
-            .HasMany(p => p.Employees)
-            .WithOne()
-            .HasForeignKey(ep => ep.DepartmentId)
-            .IsRequired();
-
-        // Department - DepartmentHistory
-        modelBuilder.Entity<Department>()
-            .HasMany(d => d.Histories)
-            .WithOne()
-            .HasForeignKey(dh => dh.DepartmentId)
-            .IsRequired(false);
-        modelBuilder.Entity<DepartmentHistory>()
-            .HasOne<Department>()
-            .WithMany(d => d.Histories)
-            .HasForeignKey(dh => dh.DepartmentId)
-            .IsRequired();
-
-        // Position - PositionHistory
-        modelBuilder.Entity<Position>()
-            .HasMany(p => p.Histories)
-            .WithOne()
-            .HasForeignKey(ph => ph.PositionId)
-            .IsRequired(false);
-        modelBuilder.Entity<PositionHistory>()
-            .HasOne<Position>()
-            .WithMany(p => p.Histories)
-            .HasForeignKey(ph => ph.PositionId)
-            .IsRequired();
 
         modelBuilder.Entity<Document>()
             .Property(d => d.Type)
             .HasConversion<string>();
+
+        modelBuilder.Entity<Employee>()
+            .Property(e => e.DateOfBirth).HasColumnType("date");
+        modelBuilder.Entity<DepartmentHistory>()
+            .Property(dh => dh.CreatedOn).HasColumnType("date");
+        modelBuilder.Entity<DepartmentHistory>()
+            .Property(dh => dh.DeletedOn).HasColumnType("date");
+        modelBuilder.Entity<PositionHistory>()
+            .Property(ph => ph.CreatedOn).HasColumnType("date");
+        modelBuilder.Entity<PositionHistory>()
+            .Property(ph => ph.DeletedOn).HasColumnType("date");
     }
 }

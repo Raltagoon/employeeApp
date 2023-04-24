@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using FlyingCars.Models.Linkers;
 
-namespace FlyingCars.EmployeeExample
+namespace FlyingCars.Models.Employee
 {
     public class Employee
     {
@@ -8,13 +9,13 @@ namespace FlyingCars.EmployeeExample
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string? MiddleName { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public DateOnly DateOfBirth { get; set; }
 
         public ICollection<Document> Documents { get; set; }
         public ICollection<EmployeeDepartmentLink> Departments { get; set; }
         public ICollection<EmployeePositionLink> Positions { get; set; }
 
-        public Employee(string firstName, string lastName, DateTime dateOfBirth, string? middleName = null)
+        public Employee(string firstName, string lastName, DateOnly dateOfBirth, string? middleName = null)
         {
             FirstName = firstName ?? throw new ArgumentNullException(firstName);
             LastName = lastName ?? throw new ArgumentNullException(lastName);

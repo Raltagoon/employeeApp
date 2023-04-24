@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 
-namespace FlyingCars.EmployeeExample
+namespace FlyingCars.Models.Linkers
 {
     public class EmployeeDepartmentLink
     {

@@ -1,4 +1,7 @@
-﻿namespace FlyingCars.EmployeeExample
+﻿using FlyingCars.EmployeeExample;
+using FlyingCars.Models.Linkers;
+
+namespace FlyingCars.Models.Position
 {
     public class Position
     {
@@ -6,7 +9,6 @@
         public string Title { get; set; }
 
         public ICollection<EmployeePositionLink>? Employees { get; set; }
-        public ICollection<PositionHistory>? Histories { get; set; }
 
 
         public Position(string title)
