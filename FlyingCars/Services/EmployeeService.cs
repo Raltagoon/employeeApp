@@ -195,39 +195,10 @@ namespace FlyingCars.Services
             await _repository.SaveAsync();
         }
 
-
-
-        // other
-        //public async Task<ICollection<EmployeeDto>> GetByPositionAsync(string position)
-        //{
-        //    var employees = await _repository.GetByPositionAsync(position);
-        //    return _mapper.Map<ICollection<Employee>, ICollection<EmployeeDto>>(employees);
-        //}
-        //
-        //public async Task<ICollection<EmployeeDto>> GetByDepartmentAsync(string department)
-        //{
-        //    var employees = await _repository.GetByDepartmentAsync(department);
-        //    return _mapper.Map<ICollection<Employee>, ICollection<EmployeeDto>>(employees);
-        //}
-        //
-        //public async Task AddPositionAsync(Guid employeeId, Guid positionId)
-        //{
-        //    await _repository.AddPositionAsync(employeeId, positionId);
-        //}
-        //
-        //public async Task RemovePositionAsync(Guid edeployeeId, Guid oldPositionId)
-        //{
-        //    await _repository.RemovePositionAsync(edeployeeId, oldPositionId);
-        //}
-        //
-        //public async Task AddDepartmentAsync(Guid employeeId, Guid newDepartmentId)
-        //{
-        //    await _repository.AddDepartmentAsync(employeeId, newDepartmentId);
-        //}
-        //
-        //public async Task RemoveDepartmentAsync(Guid employeeId, Guid oldDepartmentId)
-        //{
-        //    await _repository.RemoveDepartmentAsync(employeeId, oldDepartmentId);
-        //}
+        public async Task<ICollection<EmployeeDto>> GetAllByPositionIdAsync(Guid id)
+        {
+            var employees = await _repository.GetAllByPositiodIdAsync(id);
+            return _mapper.Map<ICollection<Employee>, ICollection<EmployeeDto>>(employees);
+        }
     }
 }

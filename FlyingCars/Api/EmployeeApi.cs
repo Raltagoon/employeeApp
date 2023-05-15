@@ -75,50 +75,10 @@ namespace FlyingCars.EmployeeExample
                 await service.RemovePositionAsync(employeeId, positionId);
             });
 
-            //other
-            //app.MapGet("/employee/search/position", async (EmployeeService service, string position) =>
-            //{
-            //    if (await service.GetEmployeesByPositionAsync(position) is ICollection<EmployeeDto> employees)
-            //    {
-            //        return Results.Ok(employees);
-            //    }
-            //    else
-            //    {
-            //        return Results.NotFound();
-            //    }
-            //});
-            //
-            //app.MapGet("/employee/search/department", async (EmployeeService service, string department) =>
-            //{
-            //    if (await service.GetEmployeesByDepartmentAsync(department) is ICollection<EmployeeDto> employees)
-            //    {
-            //        return Results.Ok(employees);
-            //    }
-            //    else
-            //    {
-            //        return Results.NotFound();
-            //    }
-            //});
-            //
-            //app.MapPut("/employee/addposition", async (EmployeeService service, Guid employeeId, Guid newPositionId) =>
-            //{
-            //    await service.AddPositionAsync(employeeId, newPositionId);
-            //});
-            //
-            //app.MapPut("/employee/removeposition", async (EmployeeService service, Guid employeeId, Guid oldPositionId) =>
-            //{
-            //    await service.RemovePositionAsync(employeeId, oldPositionId);
-            //});
-            //
-            //app.MapPut("/employee/adddepartment", async (EmployeeService service, Guid employeeId, Guid newDepartmentId) =>
-            //{
-            //    await service.AddDepartmentAsync(employeeId, newDepartmentId);
-            //});
-            //
-            //app.MapPut("/employee/removedepartment", async (EmployeeService service, Guid employeeId, Guid oldDepartmentId) =>
-            //{
-            //    await service.RemoveDepartmentAsync(employeeId, oldDepartmentId);
-            //});
+            app.MapGet("/employee/searchbyposition/{id}", async (EmployeeService service, Guid id) =>
+            {
+                return await service.GetAllByPositionIdAsync(id);
+            });
         }
     }
 }
