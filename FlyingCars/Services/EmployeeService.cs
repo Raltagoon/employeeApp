@@ -166,20 +166,34 @@ namespace FlyingCars.Services
             }
         }
 
-        // other
-       //public async Task ChangePositionAsync(Guid employeeId, Guid newPositionId, Guid? oldPositionId)
-       //{
-       //    var employee = await _repository.GetByIdWithNavigationPropertiesAsync(employeeId, EmployeeNavigationProperties.Positions | EmployeeNavigationProperties.Departments);
-       //    await _manager.Promote(employee, newPositionId);
-       //
-       //    if (oldPositionId.HasValue)
-       //    {
-       //        employee.Employee.RemovePosition(oldPositionId.Value);
-       //        var oldPositionName = await _positionRepository.GetTitleByIdAsync(oldPositionId.Value);
-       //        await _historyRepository.SetEndDateAsync(employeeId, oldPositionName);
-       //    }
-       //    await _repository.UpdateAsync(employee.Employee);
-       //}
+       //other
+       public async Task AddPositionAsync(Guid employeeId, Guid positionId)
+       {
+            var employee = await _repository.GetByIdWithNavigationPropertiesAsync(employeeId, EmployeeNavigationProperties.Positions);
+            // не бизнесс правило, поэтому в сервисе?
+            if (employee.Positions.Any(p => p.Id == positionId))
+            {
+                throw new ArgumentException("Employee already has this position.");
+            }
+            var positionName = await _positionRepository.GetTitleByIdAsync(positionId);
+
+            await _manager.AddPositionAsync(employee, positionId, positionName);
+            await _repository.SaveAsync();
+       }
+
+        public async Task RemovePositionAsync(Guid employeeId, Guid positionId)
+        {
+            var employee = await _repository.GetByIdWithNavigationPropertiesAsync(employeeId, EmployeeNavigationProperties.Positions);
+            // не бизнесс правило, поэтому в сервисе?
+            if (!employee.Positions.Any(p => p.Id == positionId))
+            {
+                throw new ArgumentException("Employee doesnt have this position.");
+            }
+            var positionName = await _positionRepository.GetTitleByIdAsync(positionId);
+
+            await _manager.RemovePositionAsync(employee, positionId, positionName);
+            await _repository.SaveAsync();
+        }
 
 
 
@@ -196,9 +210,9 @@ namespace FlyingCars.Services
         //    return _mapper.Map<ICollection<Employee>, ICollection<EmployeeDto>>(employees);
         //}
         //
-        //public async Task AddPositionAsync(Guid employeeId, Guid newPositionId)
+        //public async Task AddPositionAsync(Guid employeeId, Guid positionId)
         //{
-        //    await _repository.AddPositionAsync(employeeId, newPositionId);
+        //    await _repository.AddPositionAsync(employeeId, positionId);
         //}
         //
         //public async Task RemovePositionAsync(Guid edeployeeId, Guid oldPositionId)

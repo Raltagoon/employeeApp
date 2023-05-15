@@ -65,10 +65,15 @@ namespace FlyingCars.EmployeeExample
             });
 
             // other
-            //app.MapPut("/employee/addposition", async (EmployeeService service, Guid employeeId, Guid newPositionId, Guid? oldPositionId) =>
-            //{
-            //    await service.ChangePositionAsync(employeeId, newPositionId, oldPositionId);
-            //});
+            app.MapPut("/employee/addposition", async (EmployeeService service, Guid employeeId, Guid positionId) =>
+            {
+                await service.AddPositionAsync(employeeId, positionId);
+            });
+
+            app.MapPut("/employee/removeposition", async (EmployeeService service, Guid employeeId, Guid positionId) =>
+            {
+                await service.RemovePositionAsync(employeeId, positionId);
+            });
 
             //other
             //app.MapGet("/employee/search/position", async (EmployeeService service, string position) =>
