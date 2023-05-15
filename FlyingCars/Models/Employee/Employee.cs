@@ -1,33 +1,42 @@
-﻿using System.ComponentModel.DataAnnotations;
-using FlyingCars.Models.Linkers;
-
-namespace FlyingCars.Models.Employee
+﻿namespace FlyingCars.Models
 {
     public class Employee
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string? MiddleName { get; set; }
         public DateOnly DateOfBirth { get; set; }
 
-        public ICollection<Document> Documents { get; set; }
-        public ICollection<EmployeeDepartmentLink> Departments { get; set; }
-        public ICollection<EmployeePositionLink> Positions { get; set; }
+        public ICollection<Document> Documents { get; set; } = new List<Document>();
+        public ICollection<EmployeeDepartmentLink> Departments { get; set; } = new List<EmployeeDepartmentLink>();
+        public ICollection<EmployeePositionLink> Positions { get; set; } = new List<EmployeePositionLink>();
 
-        public Employee(string firstName, string lastName, DateOnly dateOfBirth, string? middleName = null)
+        protected Employee()
         {
+        }
+
+        public Employee(
+            Guid id,
+            string firstName,
+            string lastName,
+            DateOnly dateOfBirth,
+            string? middleName = null)
+        {
+            Id = id;
             FirstName = firstName ?? throw new ArgumentNullException(firstName);
             LastName = lastName ?? throw new ArgumentNullException(lastName);
             MiddleName = middleName;
             DateOfBirth = dateOfBirth;
         }
-        public void Validate()
+
+        public void RemovePosition(Guid positiodId)
         {
-            if (Documents == null || Documents.Count != 2)
-            {
-                throw new ArgumentException("Inn and Snils must be provided.");
-            }
+            var positionToRemove = Positions.FirstOrDefault(p => p.PositionId == positiodId);
+            if (positionToRemove != null)
+                Positions.Remove(positionToRemove);
+            else
+                throw new ArgumentException("employee doesnt have such a position");
         }
     }
 }

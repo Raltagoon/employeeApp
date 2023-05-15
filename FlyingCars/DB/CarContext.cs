@@ -1,8 +1,4 @@
-﻿using FlyingCars.Models.Department;
-using FlyingCars.Models.Employee;
-using FlyingCars.Models.History;
-using FlyingCars.Models.Linkers;
-using FlyingCars.Models.Position;
+﻿using FlyingCars.Models;
 using Microsoft.EntityFrameworkCore;
 
 public class CarContext : DbContext
@@ -15,8 +11,7 @@ public class CarContext : DbContext
     public DbSet<Document> Documents => Set<Document>();
     public DbSet<Department> Departments => Set<Department>();
     public DbSet<Position> Positions => Set<Position>();
-    public DbSet<DepartmentHistory> DepartmentHistories => Set<DepartmentHistory>();
-    public DbSet<PositionHistory> PositionHistories => Set<PositionHistory>();
+    public DbSet<History> Histories => Set<History>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -62,20 +57,5 @@ public class CarContext : DbContext
             .HasForeignKey(ep => ep.DepartmentId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<Document>()
-            .Property(d => d.Type)
-            .HasConversion<string>();
-
-        modelBuilder.Entity<Employee>()
-            .Property(e => e.DateOfBirth).HasColumnType("date");
-        modelBuilder.Entity<DepartmentHistory>()
-            .Property(dh => dh.CreatedOn).HasColumnType("date");
-        modelBuilder.Entity<DepartmentHistory>()
-            .Property(dh => dh.DeletedOn).HasColumnType("date");
-        modelBuilder.Entity<PositionHistory>()
-            .Property(ph => ph.CreatedOn).HasColumnType("date");
-        modelBuilder.Entity<PositionHistory>()
-            .Property(ph => ph.DeletedOn).HasColumnType("date");
     }
 }

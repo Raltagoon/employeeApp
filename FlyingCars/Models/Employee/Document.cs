@@ -1,22 +1,26 @@
 ﻿using ValidationsCollection;
 
-namespace FlyingCars.Models.Employee
+namespace FlyingCars.Models
 {
     public enum DocumentType
     {
-        Inn,
-        Snils
+        Inn = 10,
+        Snils = 20
     }
 
     public class Document
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public DocumentType Type { get; set; }
         public string Number { get; set; }
 
-        public int EmployeeId { get; set; }
+        public Guid EmployeeId { get; set; }
 
-        public Document(DocumentType type, string number, int employeeId)
+        public Document(
+            Guid id,
+            DocumentType type,
+            string number,
+            Guid employeeId)
         {
             switch (type)
             {
@@ -29,6 +33,7 @@ namespace FlyingCars.Models.Employee
                 default:
                     throw new ArgumentNullException(nameof(type));
             }
+            Id = id;
             Type = type;
             EmployeeId = employeeId;
         }

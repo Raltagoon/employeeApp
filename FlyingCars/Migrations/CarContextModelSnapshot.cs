@@ -20,9 +20,9 @@ namespace FlyingCars.Migrations
 
             modelBuilder.Entity("FlyingCars.Models.Department.Department", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -35,20 +35,19 @@ namespace FlyingCars.Migrations
 
             modelBuilder.Entity("FlyingCars.Models.Employee.Document", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("char(36)");
 
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Number")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -59,9 +58,9 @@ namespace FlyingCars.Migrations
 
             modelBuilder.Entity("FlyingCars.Models.Employee.Employee", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("char(36)");
 
                     b.Property<DateOnly>("DateOfBirth")
                         .HasColumnType("date");
@@ -82,67 +81,40 @@ namespace FlyingCars.Migrations
                     b.ToTable("Employees");
                 });
 
-            modelBuilder.Entity("FlyingCars.Models.History.DepartmentHistory", b =>
+            modelBuilder.Entity("FlyingCars.Models.History.History", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("char(36)");
 
-                    b.Property<DateOnly>("CreatedOn")
+                    b.Property<DateOnly>("CreatedAt")
                         .HasColumnType("date");
 
-                    b.Property<DateOnly?>("DeletedOn")
+                    b.Property<DateOnly?>("DeletedAt")
                         .HasColumnType("date");
 
-                    b.Property<int>("DepEvent")
-                        .HasColumnType("int");
-
-                    b.Property<string>("DepartmentName")
+                    b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("EmployeeId")
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<int>("Type")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("DepartmentHistories");
-                });
-
-            modelBuilder.Entity("FlyingCars.Models.History.PositionHistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<DateOnly>("CreatedOn")
-                        .HasColumnType("date");
-
-                    b.Property<DateOnly?>("DeletedOn")
-                        .HasColumnType("date");
-
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PosEvent")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PositionName")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PositionHistories");
+                    b.ToTable("Histories");
                 });
 
             modelBuilder.Entity("FlyingCars.Models.Linkers.EmployeeDepartmentLink", b =>
                 {
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("char(36)");
 
-                    b.Property<int>("DepartmentId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("DepartmentId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("EmployeeId", "DepartmentId");
 
@@ -153,11 +125,11 @@ namespace FlyingCars.Migrations
 
             modelBuilder.Entity("FlyingCars.Models.Linkers.EmployeePositionLink", b =>
                 {
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("char(36)");
 
-                    b.Property<int>("PositionId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("PositionId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("EmployeeId", "PositionId");
 
@@ -168,9 +140,9 @@ namespace FlyingCars.Migrations
 
             modelBuilder.Entity("FlyingCars.Models.Position.Position", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Title")
                         .IsRequired()

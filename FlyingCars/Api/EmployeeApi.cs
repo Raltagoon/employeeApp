@@ -1,7 +1,8 @@
-﻿using FlyingCars.Models.Department;
-using FlyingCars.Models.Employee;
-using FlyingCars.Models.Position;
-using ValidationsCollection;
+﻿using FluentValidation;
+using FlyingCars.DTO;
+using FlyingCars.Models;
+using FlyingCars.Services;
+using FlyingCars.Validation;
 
 namespace FlyingCars.EmployeeExample
 {
@@ -10,188 +11,109 @@ namespace FlyingCars.EmployeeExample
         public void Register(WebApplication app)
         {
             // create
-            app.MapPost("/department", async (EmployeeRepository repository, Department department) =>
+            app.MapPost("/employee", async (EmployeeService service, Employee employee) =>
             {
-                await repository.AddDepartmentAsync(department);
-                return Results.Ok(department);
-            })
-            .WithName("Create department")
-            .WithTags("Employee.Create");
+                var validator = new EmployeeValidator();
+                var validationResult = await validator.ValidateAsync(employee);
+                if (!validationResult.IsValid)
+                {
+                    throw new ValidationException(validationResult.Errors);
+                }
 
-            app.MapPost("/position", async (EmployeeRepository repository, Position position) =>
-            {
-                await repository.AddPositionAsync(position);
-                return Results.Ok(position);
-            })
-            .WithName("Create position")
-            .WithTags("Employee.Create");
-            app.MapPost("/employee", async (EmployeeRepository repository, Employee employee) =>
-            {
-                employee.Validate();
-                //await repository.AddEmployeeAsync(employee);
+                await service.AddAsync(employee);
                 return Results.Ok(employee);
-            })
-            .WithName("Create employee")
-            .WithTags("Employee.Create");
-
-            app.MapPost("/document", async (EmployeeRepository repository, Document document) =>
-            {
-                await repository.AddDocument(document);
-                return Results.Ok(document);
-            })
-            .WithName("Create document")
-            .WithTags("Employee.Create");
+            });
 
             // read
-            app.MapGet("/department", async (EmployeeRepository repository) =>
+            app.MapGet("/employee", async (EmployeeService service) =>
             {
-                return Results.Ok(await repository.GetAllDepartmentsAsync());
-            })
-            .WithName("Get all departments")
-            .WithTags("Employee.Read");
-
-            app.MapGet("/position", async (EmployeeRepository repository) =>
-            {
-                return Results.Ok(await repository.GetAllPositionsAsync());
-            })
-            .WithName("Get all positions")
-            .WithTags("Employee.Read");
-
-            app.MapGet("/employee", async (EmployeeRepository repository) =>
-            {
-                return Results.Ok(await repository.GetAllEmployeesAsync());
-            })
-            .WithName("Get all employees")
-            .WithTags("Employee.Read");
-
-            app.MapGet("/document", async (EmployeeRepository repository) =>
-            {
-                return Results.Ok(await repository.GetAllDocumentsAsync());
-            })
-            .WithName("Get all documents")
-            .WithTags("Employee.Read");
-
-            app.MapGet("/departmenthistories", async (EmployeeRepository repository) =>
-            {
-                return Results.Ok(await repository.GetDepartmentHistoriesAsync());
+                return Results.Ok(await service.GetAllAsync());
             });
 
-            app.MapGet("/positionhistories", async (EmployeeRepository repository) =>
+            app.MapGet("/employee/paged", async (EmployeeService service, int pageSize, int pageNumber) =>
             {
-                return Results.Ok(await repository.GetPositionHistoriesAsync());
+                return Results.Ok(await service.GetPagedList(pageSize, pageNumber));
             });
 
-            app.MapGet("/positionhistories/position", async (EmployeeRepository repository, int positionId) =>
+            app.MapGet("/employee/{id}", async (EmployeeService service, Guid id) =>
             {
-                //return Results.Ok(await repository.GetPositionHistoryByPositionAsync(positionId));
+                return Results.Ok(await service.GetByIdAsync(id));
             });
 
-            app.MapGet("/departmenthistories/department", async (EmployeeRepository repository, int departmentId) =>
+            app.MapGet("/employeewithnavigation", async (EmployeeService service, EmployeeNavigationProperties properties) =>
             {
-                //return Results.Ok(await repository.GetDepartmentHistoryByPositionAsync(departmentId));
+                return Results.Ok(await service.GetAllWithNavigationPropertiesAsync(properties));
             });
 
-            app.MapGet("/employee/search/position", async (EmployeeRepository repository, string position) =>
+            app.MapGet("/employeewithnavigation/{id}", async (EmployeeService service, Guid id, EmployeeNavigationProperties properties) =>
             {
-                if (await repository.GetEmployeesByPositionAsync(position) is ICollection<Employee> employees)
-                {
-                    return Results.Ok(employees);
-                }
-                else
-                {
-                    return Results.NotFound();
-                }
-            });
-
-            app.MapGet("/employee/search/department", async (EmployeeRepository repository, string department) =>
-            {
-                if (await repository.GetEmployeesByDepartmentAsync(department) is ICollection<Employee> employees)
-                {
-                    return Results.Ok(employees);
-                }
-                else
-                {
-                    return Results.NotFound();
-                }
+                return Results.Ok(await service.GetByIdWithNavigationPropertiesAsync(id, properties));
             });
 
             //update
-            app.MapPut("/department", async (EmployeeRepository repository, Department department) =>
+            app.MapPut("/employee", async (EmployeeService service, Employee employee) =>
             {
-                await repository.ChangeDepartmentAsync(department);
-                return Results.Ok(department);
-            })
-            .WithName("Update department")
-            .WithTags("Employee.Update");
-
-            app.MapPut("/position", async (EmployeeRepository repository, Position position) =>
-            {
-                await repository.ChangePositionAsync(position);
-                return Results.Ok(position);
-            })
-            .WithName("Update position")
-            .WithTags("Employee.Update");
-
-            app.MapPut("/employee", async (EmployeeRepository repository, Employee employee) =>
-            {
-                await repository.ChangeEmployeeAsync(employee);
+                await service.UpdateAsync(employee);
                 return Results.Ok(employee);
-            })
-            .WithName("Update employee")
-            .WithTags("Employee.Update");
-
-            app.MapPut("/document", async (EmployeeRepository repository, Document document) =>
-            {
-                await repository.ChangeDocumentAsync(document);
-                return Results.Ok(document);
-            })
-            .WithName("Update document")
-            .WithTags("Employee.Update");
-
-            app.MapPut("/employee/changeposition", async (EmployeeRepository repository, int employeeId, int? newPositionId, int? oldPositionId) =>
-            {
-                //await repository.ChangeEmployeePosition(employeeId, newPositionId, oldPositionId);
-                return Results.Ok();
-            });
-
-            app.MapPut("/employee/transfer", async (EmployeeRepository repository, int employeeId, int? newDepartmentId, int? oldDepartmentId) =>
-            {
-                //await repository.ChangeEmployeeDepartment(employeeId, newDepartmentId, oldDepartmentId);
-                return Results.Ok();
             });
 
             // delete
-            app.MapDelete("/department/{id}", async (EmployeeRepository repository, int id) =>
+            app.MapDelete("/employee/{id}", async (EmployeeService service, Guid id) =>
             {
-                await repository.DeleteDepartmentByIdAsync(id);
+                await service.DeleteByIdAsync(id);
                 return Results.Ok();
-            })
-            .WithName("Delete department")
-            .WithTags("Employee.Delete");
+            });
 
-            app.MapDelete("/position/{id}", async (EmployeeRepository repository, int id) =>
-            {
-                await repository.DeletePositionByIdAsync(id);
-                return Results.Ok();
-            })
-            .WithName("Delete position")
-            .WithTags("Employee.Delete");
+            // other
+            //app.MapPut("/employee/addposition", async (EmployeeService service, Guid employeeId, Guid newPositionId, Guid? oldPositionId) =>
+            //{
+            //    await service.ChangePositionAsync(employeeId, newPositionId, oldPositionId);
+            //});
 
-            app.MapDelete("/employee/{id}", async (EmployeeRepository repository, int id) =>
-            {
-            //    await repository.DeleteEmployeeByIdAsync(id);
-                return Results.Ok();
-            })
-            .WithName("Delete employee")
-            .WithTags("Employee.Delete");
-
-            app.MapDelete("/document/{id}", async (EmployeeRepository repository, int id) =>
-            {
-                await repository.DeleteDocumentByIdAsync(id);
-                return Results.Ok();
-            })
-            .WithName("Delete document")
-            .WithTags("Employee.Delete");
+            //other
+            //app.MapGet("/employee/search/position", async (EmployeeService service, string position) =>
+            //{
+            //    if (await service.GetEmployeesByPositionAsync(position) is ICollection<EmployeeDto> employees)
+            //    {
+            //        return Results.Ok(employees);
+            //    }
+            //    else
+            //    {
+            //        return Results.NotFound();
+            //    }
+            //});
+            //
+            //app.MapGet("/employee/search/department", async (EmployeeService service, string department) =>
+            //{
+            //    if (await service.GetEmployeesByDepartmentAsync(department) is ICollection<EmployeeDto> employees)
+            //    {
+            //        return Results.Ok(employees);
+            //    }
+            //    else
+            //    {
+            //        return Results.NotFound();
+            //    }
+            //});
+            //
+            //app.MapPut("/employee/addposition", async (EmployeeService service, Guid employeeId, Guid newPositionId) =>
+            //{
+            //    await service.AddPositionAsync(employeeId, newPositionId);
+            //});
+            //
+            //app.MapPut("/employee/removeposition", async (EmployeeService service, Guid employeeId, Guid oldPositionId) =>
+            //{
+            //    await service.RemovePositionAsync(employeeId, oldPositionId);
+            //});
+            //
+            //app.MapPut("/employee/adddepartment", async (EmployeeService service, Guid employeeId, Guid newDepartmentId) =>
+            //{
+            //    await service.AddDepartmentAsync(employeeId, newDepartmentId);
+            //});
+            //
+            //app.MapPut("/employee/removedepartment", async (EmployeeService service, Guid employeeId, Guid oldDepartmentId) =>
+            //{
+            //    await service.RemoveDepartmentAsync(employeeId, oldDepartmentId);
+            //});
         }
     }
 }

@@ -1,18 +1,18 @@
-﻿using FlyingCars.EmployeeExample;
-using FlyingCars.Models.Linkers;
-
-namespace FlyingCars.Models.Position
+﻿namespace FlyingCars.Models
 {
     public class Position
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Title { get; set; }
 
         public ICollection<EmployeePositionLink>? Employees { get; set; }
 
 
-        public Position(string title)
+        public Position(
+            Guid id,
+            string title)
         {
+            Id = id;
             Title = title ?? throw new ArgumentNullException(title);
         }
     }

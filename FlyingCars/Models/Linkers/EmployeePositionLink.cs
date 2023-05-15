@@ -1,8 +1,8 @@
-﻿namespace FlyingCars.Models.Linkers
+﻿namespace FlyingCars.Models
 {
     public class EmployeePositionLink
     {
-        public int EmployeeId { get; set; }
-        public int PositionId { get; set; }
+        public Guid EmployeeId { get; set; }
+        public Guid PositionId { get; set; }
     }
 }

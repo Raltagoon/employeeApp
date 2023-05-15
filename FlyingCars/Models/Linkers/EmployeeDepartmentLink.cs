@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 
-namespace FlyingCars.Models.Linkers
+namespace FlyingCars.Models
 {
     public class EmployeeDepartmentLink
     {
-        public int EmployeeId { get; set; }
-        public int DepartmentId { get; set; }
+        public Guid EmployeeId { get; set; }
+        public Guid DepartmentId { get; set; }
     }
 }
